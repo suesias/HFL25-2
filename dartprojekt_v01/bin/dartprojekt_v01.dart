@@ -2,21 +2,10 @@ import 'dart:io';
 
 void main() {
   
-  int num1;
-  int num2;
+  int num1 = readInt('Skriv första talet:');
+
   var operator;
 
-  while (true) {
-    print('Skriv första talet:');
-    String? input = stdin.readLineSync(); //String? betyder att den kan vara null
-
-    try {
-      num1 = int.parse(input!); // Försök att konvertera till int
-      break; // Success avsluta loopen
-    } catch (e) {
-      print('Du måste skriva ett heltal. Försök igen.');
-    }
-  }
 
   while (true) {
     print('Vilken operation + eller -');
@@ -30,18 +19,7 @@ void main() {
     }
   }
 
-
- while (true) {
-    print('Skriv andra talet:');
-    String? input = stdin.readLineSync();
-
-    try {
-      num2 = int.parse(input!); // Försök att konvertera till int
-      break; // Success avsluta loopen
-    } catch (e) {
-      print('Du måste skriva ett heltal. Försök igen.');
-    }
-  }
+  int num2 = readInt('Skriv andra talet:');
   
 
   if (operator == '-') {
@@ -52,5 +30,18 @@ void main() {
     print('Summan av talen = $sum');
   } else {
     print('Ogiltig operation');
+  }
+}
+
+int readInt(String prompt) {
+  while (true) {
+    print(prompt);
+    String? input = stdin.readLineSync();
+
+    try {
+      return int.parse(input!); // Skicka tillbaka vid success
+    } catch (e) {
+      print('Du måste skriva ett heltal. Försök igen.');
+    }
   }
 }
