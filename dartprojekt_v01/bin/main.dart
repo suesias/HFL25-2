@@ -1,7 +1,7 @@
 import 'dart:io';
 
 void main() {
-  
+
   int num1 = readInt('Skriv första talet:');
   String operator = getOperator('Vilken operation +, -, * eller /');
   int num2 = readInt('Skriv andra talet:');
