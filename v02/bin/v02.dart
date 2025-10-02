@@ -1,8 +1,6 @@
-import 'package:v02/v02.dart' as v02;
+import 'package:v02/v02.dart';
 import 'dart:io';
 
-// List för att lagra hjältar
-List<Map<String, dynamic>> hjaltar = [];
 
 void main() {
   bool runProgram = true;
@@ -37,20 +35,5 @@ void main() {
   }
 }
 
-void addHero() {
- 
-  print("add hero");
-}
 
-void showHero() {
-
-    print("show hero");
-
-}
-
-void searchHero() {
-
-    print("search hero");
-
-}
 
