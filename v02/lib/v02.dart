@@ -45,10 +45,46 @@ heroes.add({
   "specialpower": kraft,
 });
 
-  print("Hjälten $name lades till!\n");
+  print("Hjälten $name lades till!");
 }
 
 
-void showHero() {}
+void showHero() {
+    if (heroes.isEmpty) {
+    print("\nInga hjältar tillagda än.");
+    return;
+  }
 
-void searchHero() {}
+  // Sortera efter styrka (starkast först)
+ heroes.sort((a, b) => (b["powerstats"]["strength"] as int).compareTo(a["powerstats"]["strength"] as int));
+
+  print("\nLista över hjältar (starkast först):");
+
+    heroes.forEach((h) {
+        print("${h["name"]} | Styrka: ${h["powerstats"]["strength"]} | Kraft: ${h["specialpower"]}");   
+    });
+}
+
+void searchHero() {
+    stdout.write("\nSök efter hjälte (namn eller del av namn): ");
+    final input = stdin.readLineSync();
+
+    if (input == null || input.trim().isEmpty) {
+        print("Du måste skriva något!");
+        return;
+    }
+
+    final searchfor = input.trim().toLowerCase();
+
+  // Filtrera listan
+    final resultat = heroes.where((h) => (h["name"] as String).toLowerCase().contains(searchfor));
+
+    if (resultat.isEmpty) {
+        print("Ingen hjälte hittades på '$searchfor'.");
+    } else {
+        print("\nSökträffar på '$searchfor':");
+        resultat.forEach((h) {
+            print("${h["name"]} | Styrka: ${h["powerstats"]["strength"]} | Kraft: ${h["specialpower"]}");   
+        });
+    }
+}

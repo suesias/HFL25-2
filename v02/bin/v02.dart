@@ -6,7 +6,7 @@ void main() {
   bool runProgram = true;
 
   while (runProgram) {
-    print("HeroDex 3000 - välj ett alternativ:");
+    print("\n\nHeroDex 3000 - välj ett alternativ:");
     print("1. Lägg till hjälte");
     print("2. Visa hjältar");
     print("3. Sök hjälte");
