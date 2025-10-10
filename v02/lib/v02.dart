@@ -2,6 +2,8 @@ import 'dart:io';
 
 List<Map<String, dynamic>> heroes = [];
 
+int nextId = 1;
+
 void addHero() {
   String name;
   while (true) {
@@ -38,6 +40,7 @@ void addHero() {
   }
 
 heroes.add({
+  "id": nextId++,
   "name": name,
   "powerstats": {
     "strength": styrka,
@@ -61,7 +64,7 @@ void showHero() {
   print("\nLista över hjältar (starkast först):");
 
     heroes.forEach((h) {
-        print("${h["name"]} | Styrka: ${h["powerstats"]["strength"]} | Kraft: ${h["specialpower"]}");   
+        print("${h["id"]} | ${h["name"]} | Styrka: ${h["powerstats"]["strength"]} | Kraft: ${h["specialpower"]}");   
     });
 }
 
