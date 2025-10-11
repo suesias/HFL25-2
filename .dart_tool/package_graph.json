@@ -1,10 +1,10 @@
 {
   "roots": [
-    "v03"
+    "v02"
   ],
   "packages": [
     {
-      "name": "v03",
+      "name": "v02",
       "version": "1.0.0",
       "dependencies": [
         "path"
