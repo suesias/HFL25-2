@@ -23,20 +23,25 @@ class HeroDataManager implements HeroDataManaging {
   List<HeroModel> _heroes = []; // Privat lista
 
   Future<void> init() async {
-    // Ladda från fil
-    final file = File('heroes.json');
-    if (await file.exists()) {
-      try {
-        final jsonStr = await file.readAsString();
-        final List<dynamic> jsonList = json.decode(jsonStr);
-        _heroes = jsonList.map((json) => HeroModel.fromJson(json)).toList();
-      } catch (e) {
-        print('Fel vid laddning: $e'); // Felhantering för UX
-      }
-    } else {
-      print('Ingen fil hittad, startar tom.');
+  print('Försöker ladda heroes.json...'); // Felsökning
+  final file = File('heroes.json');
+  if (await file.exists()) {
+    print('Fil hittad! Läser innehåll...');
+    try {
+      final jsonStr = await file.readAsString();
+      print('JSON-innehåll: $jsonStr'); // Visa rå JSON
+      final List<dynamic> jsonList = json.decode(jsonStr);
+      print('Parsad JSON-lista: $jsonList'); // Visa parsad lista
+      _heroes = jsonList.map((json) => HeroModel.fromJson(json)).toList();
+      print('Laddade ${_heroes.length} hjältar.');
+    } catch (e) {
+      print('Fel vid laddning: $e'); // Visa exakt fel
     }
+  } else {
+    print('heroes.json hittades inte, startar med tom lista.');
+    _heroes = [];
   }
+}
 
   @override
   Future<void> saveHero(HeroModel hero) async {
