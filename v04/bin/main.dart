@@ -1,8 +1,12 @@
 import 'package:v04/logic.dart';
 import 'package:v04/managers/hero_data_manager.dart';
 import 'dart:io';
+import 'package:v04/config/env.dart';
 
 Future<void> main() async {
+  Env.load(); // laddar .env
+  print(Env.superheroApiKey);
+
   final manager = HeroDataManager();
   await manager.init(); // Ladda data async
 
