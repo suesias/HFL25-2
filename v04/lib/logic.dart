@@ -1,97 +1,53 @@
 import 'package:v04/managers/hero_data_manager.dart';
-import 'package:v04/models/hero_model.dart';
 import 'dart:io';
 
-final manager = HeroDataManager(); // Singleton
-
-Future<void> addHero() async {
-  // Prompt för grundläggande fält (inte alla, för att hålla enkelt – resten defaults)
-  String name;
-  while (true) {
-    stdout.write("\nHjältens namn: ");
-    final input = stdin.readLineSync();
-    if (input != null && input.trim().isNotEmpty) {
-      name = input.trim();
-      break;
+Future<void> addHero(HeroDataManager manager) async {
+  stdout.write("Ange hjältens namn (t.ex. Batman): ");
+  final name = stdin.readLineSync() ?? '';
+  if (name.isNotEmpty) {
+    final hero = await manager.fetchHeroFromApi(name);
+    if (hero != null) {
+      print('Hjält tillagd: ${hero.name}');
+      if (hero.powerstats != null) {
+        print('Intelligens: ${hero.powerstats!.intelligence}');
+      }
+      if (hero.biography != null) {
+        print('Fullt namn: ${hero.biography!.fullName}');
+      }
+    } else {
+      print('Kunde inte hitta hjälten "$name".');
     }
-    print("\nOgiltigt namn, försök igen!");
+  } else {
+    print('Inget namn angivet.');
   }
-
-  String strength;
-  while (true) {
-    stdout.write("\nHjältens styrka (text, t.ex. '26'): ");
-    final input = stdin.readLineSync();
-    if (input != null && input.trim().isNotEmpty) {
-      strength = input.trim();
-      break;
-    }
-    print("\nOgiltig styrka!");
-  }
-
-  String power; // Ditt gamla "specialpower" -> power
-  while (true) {
-    stdout.write("\nHjältens specialkraft (t.ex. '47'): ");
-    final input = stdin.readLineSync();
-    if (input != null && input.trim().isNotEmpty) {
-      power = input.trim();
-      break;
-    }
-    print("\nSpecialkraft får inte vara tom!");
-  }
-
-  // Skapa HeroModel med defaults för resten
-  final hero = HeroModel(
-    response: 'success', // Default
-    id: DateTime.now().millisecondsSinceEpoch.toString(), // Unik ID
-    name: name,
-    powerstats: Powerstats(
-      strength: strength,
-      power: power,
-      // Övriga defaults till '0' eller null
-      intelligence: '0',
-      speed: '0',
-      durability: '0',
-      combat: '0',
-    ),
-    // Övriga sektioner: null eller tomma
-    biography: Biography(aliases: []),
-    appearance: Appearance(height: [], weight: []),
-    work: Work(),
-    connections: Connections(),
-    image: HeroImage(),
-  );
-
-  await manager.saveHero(hero);
-  print("Hjälten $name lades till!");
 }
 
-Future<void> showHero() async {
+Future<void> showHeroes(HeroDataManager manager) async {
   final heroes = await manager.getHeroList();
   if (heroes.isEmpty) {
-    print("\nInga hjältar tillagda än.");
-    return;
-  }
-  print("\nLista över hjältar (starkast först):");
-  for (var h in heroes) {
-    print("${h.name} | Styrka: ${h.powerstats?.strength ?? 'Okänd'} | Kraft: ${h.powerstats?.power ?? 'Okänd'}");
+    print('Inga hjältar i listan.');
+  } else {
+    for (var hero in heroes) {
+      print('Hjält: ${hero.name}, ID: ${hero.id}');
+      if (hero.powerstats != null) {
+        print('Intelligens: ${hero.powerstats!.intelligence}');
+      }
+    }
   }
 }
 
-Future<void> searchHero() async {
-  stdout.write("\nSök efter hjälte (namn eller del av namn): ");
-  final input = stdin.readLineSync();
-  if (input == null || input.trim().isEmpty) {
-    print("Du måste skriva något!");
-    return;
-  }
-  final searchfor = input.trim();
-  final results = await manager.searchHero(searchfor);
+Future<void> searchHero(HeroDataManager manager) async {
+  stdout.write("Ange sökterm: ");
+  final query = stdin.readLineSync() ?? '';
+  final results = await manager.searchHero(query);
   if (results.isEmpty) {
-    print("Ingen hjälte hittades på '$searchfor'.");
+    print('Inga hjältar hittades för "$query".');
   } else {
-    print("\nSökträffar på '$searchfor':");
-    for (var h in results) {
-      print("${h.name} | Styrka: ${h.powerstats?.strength ?? 'Okänd'} | Kraft: ${h.powerstats?.power ?? 'Okänd'}");
+    for (var hero in results) {
+      print('Hittad: ${hero.name}, ID: ${hero.id}');
+      if (hero.powerstats != null) {
+        print('Intelligens: ${hero.powerstats!.intelligence}');
+      }
     }
   }
 }

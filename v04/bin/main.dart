@@ -1,16 +1,19 @@
 import 'package:v04/logic.dart';
 import 'package:v04/managers/hero_data_manager.dart';
-import 'dart:io';
 import 'package:v04/config/env.dart';
+import 'dart:io';
 
 Future<void> main() async {
-  Env.load(); // laddar .env
-  print(Env.superheroApiKey);
+  Env.load();
+  print('API-nyckel i main: ${Env.superheroApiKey}');
+  if (Env.superheroApiKey.isEmpty) {
+    print('Fel: Ingen API-nyckel hittades. Kontrollera .env-filen.');
+    return;
+  }
 
   final manager = HeroDataManager();
-  await manager.init(); // Ladda data async
-
   bool runProgram = true;
+
   while (runProgram) {
     print("\n\nHeroDex 3000 - välj ett alternativ:");
     print("1. Lägg till hjälte");
@@ -19,15 +22,16 @@ Future<void> main() async {
     print("4. Avsluta");
     stdout.write("Ditt val: ");
     final input = stdin.readLineSync();
+
     switch (input) {
       case "1":
-        await addHero();
+        await addHero(manager);
         break;
       case "2":
-        await showHero();
+        await showHeroes(manager);
         break;
       case "3":
-        await searchHero();
+        await searchHero(manager);
         break;
       case "4":
         print("Avslutar programmet.");
