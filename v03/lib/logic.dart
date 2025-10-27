@@ -1,8 +1,11 @@
+import 'package:v03/managers/hero_data_manager.dart';
+import 'package:v03/models/hero_model.dart';
 import 'dart:io';
 
-List<Map<String, dynamic>> heroes = [];
+final manager = HeroDataManager(); // Singleton
 
-void addHero() {
+Future<void> addHero() async {
+  // Prompt för grundläggande fält (inte alla, för att hålla enkelt – resten defaults)
   String name;
   while (true) {
     stdout.write("\nHjältens namn: ");
@@ -14,77 +17,81 @@ void addHero() {
     print("\nOgiltigt namn, försök igen!");
   }
 
-  int styrka;
+  String strength;
   while (true) {
-    stdout.write("\nHjältens styrka (heltal): ");
-    final input = stdin.readLineSync();
-    final value = int.tryParse(input ?? "");
-    if (value != null) {
-      styrka = value;
-      break;
-    }
-    print("\nOgiltig styrka, skriv ett heltal!");
-  }
-
-  String kraft;
-  while (true) {
-    stdout.write("\nHjältens specialkraft: ");
+    stdout.write("\nHjältens styrka (text, t.ex. '26'): ");
     final input = stdin.readLineSync();
     if (input != null && input.trim().isNotEmpty) {
-      kraft = input.trim();
+      strength = input.trim();
+      break;
+    }
+    print("\nOgiltig styrka!");
+  }
+
+  String power; // Ditt gamla "specialpower" -> power
+  while (true) {
+    stdout.write("\nHjältens specialkraft (t.ex. '47'): ");
+    final input = stdin.readLineSync();
+    if (input != null && input.trim().isNotEmpty) {
+      power = input.trim();
       break;
     }
     print("\nSpecialkraft får inte vara tom!");
   }
 
-heroes.add({
-  "name": name,
-  "powerstats": {
-    "strength": styrka,
-  },
-  "specialpower": kraft,
-});
+  // Skapa HeroModel med defaults för resten
+  final hero = HeroModel(
+    response: 'success', // Default
+    id: DateTime.now().millisecondsSinceEpoch.toString(), // Unik ID
+    name: name,
+    powerstats: Powerstats(
+      strength: strength,
+      power: power,
+      // Övriga defaults till '0' eller null
+      intelligence: '0',
+      speed: '0',
+      durability: '0',
+      combat: '0',
+    ),
+    // Övriga sektioner: null eller tomma
+    biography: Biography(aliases: []),
+    appearance: Appearance(height: [], weight: []),
+    work: Work(),
+    connections: Connections(),
+    image: HeroImage(),
+  );
 
+  await manager.saveHero(hero);
   print("Hjälten $name lades till!");
 }
 
-
-void showHero() {
-    if (heroes.isEmpty) {
+Future<void> showHero() async {
+  final heroes = await manager.getHeroList();
+  if (heroes.isEmpty) {
     print("\nInga hjältar tillagda än.");
     return;
   }
-
-  // Sortera efter styrka (starkast först)
- heroes.sort((a, b) => (b["powerstats"]["strength"] as int).compareTo(a["powerstats"]["strength"] as int));
-
   print("\nLista över hjältar (starkast först):");
-
-    heroes.forEach((h) {
-        print("${h["name"]} | Styrka: ${h["powerstats"]["strength"]} | Kraft: ${h["specialpower"]}");   
-    });
+  for (var h in heroes) {
+    print("${h.name} | Styrka: ${h.powerstats?.strength ?? 'Okänd'} | Kraft: ${h.powerstats?.power ?? 'Okänd'}");
+  }
 }
 
-void searchHero() {
-    stdout.write("\nSök efter hjälte (namn eller del av namn): ");
-    final input = stdin.readLineSync();
-
-    if (input == null || input.trim().isEmpty) {
-        print("Du måste skriva något!");
-        return;
+Future<void> searchHero() async {
+  stdout.write("\nSök efter hjälte (namn eller del av namn): ");
+  final input = stdin.readLineSync();
+  if (input == null || input.trim().isEmpty) {
+    print("Du måste skriva något!");
+    return;
+  }
+  final searchfor = input.trim();
+  final results = await manager.searchHero(searchfor);
+  if (results.isEmpty) {
+    print("Ingen hjälte hittades på '$searchfor'.");
+  } else {
+    print("\nSökträffar på '$searchfor':");
+    for (var h in results) {
+      print("${h.name} | Styrka: ${h.powerstats?.strength ?? 'Okänd'} | Kraft: ${h.powerstats?.power ?? 'Okänd'}");
     }
-
-    final searchfor = input.trim().toLowerCase();
-
-  // Filtrera listan
-    final resultat = heroes.where((h) => (h["name"] as String).toLowerCase().contains(searchfor));
-
-    if (resultat.isEmpty) {
-        print("Ingen hjälte hittades på '$searchfor'.");
-    } else {
-        print("\nSökträffar på '$searchfor':");
-        resultat.forEach((h) {
-            print("${h["name"]} | Styrka: ${h["powerstats"]["strength"]} | Kraft: ${h["specialpower"]}");   
-        });
-    }
+  }
 }

@@ -1,4 +1,4 @@
-import 'package:v03/v03.dart';
+import 'package:v03/logic.dart';
 
 void showHero() {
     if (heroes.isEmpty) {
