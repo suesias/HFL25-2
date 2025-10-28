@@ -75,6 +75,7 @@ Future<void> addCustomHero() async {
     return;
   }
 
+  // STYRKA
   String strength = "0";
   while (true) {
     stdout.write("Styrka (0–100, t.ex. 85): ");
@@ -87,6 +88,7 @@ Future<void> addCustomHero() async {
     print("Ogiltigt! Ange ett nummer mellan 0 och 100.");
   }
 
+  // SPECIALKRAFT
   String power = "0";
   while (true) {
     stdout.write("Specialkraft (0–100, t.ex. 47): ");
@@ -99,6 +101,33 @@ Future<void> addCustomHero() async {
     print("Ogiltigt! Ange ett nummer mellan 0 och 100.");
   }
 
+  // ALIGNMENT (NYTT!)
+  String alignment = "good";
+  print("\nAlignment (god/ond):");
+  print("1. good (god)");
+  print("2. bad (ond)");
+  print("3. neutral");
+  while (true) {
+    stdout.write("Välj (1-3): ");
+    final choice = stdin.readLineSync()?.trim();
+    switch (choice) {
+      case "1":
+        alignment = "good";
+        break;
+      case "2":
+        alignment = "bad";
+        break;
+      case "3":
+        alignment = "neutral";
+        break;
+      default:
+        print("Välj 1, 2 eller 3!");
+        continue;
+    }
+    break;
+  }
+
+  // Skapa hjälte
   final hero = HeroModel(
     response: 'success',
     id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -118,7 +147,7 @@ Future<void> addCustomHero() async {
       placeOfBirth: 'Okänd',
       firstAppearance: 'HeroDex 3000',
       publisher: 'Användare',
-      alignment: 'good',
+      alignment: alignment,  // NYTT!
     ),
     appearance: Appearance(
       gender: 'Okänd',
@@ -135,7 +164,7 @@ Future<void> addCustomHero() async {
 
   await manager.saveHero(hero);
   print("\nEgen hjälte skapad: $nameInput!");
-  print("   Styrka: $strength | Kraft: $power");
+  print("   Styrka: $strength | Kraft: $power | Alignment: $alignment");
 }
 
 // 3. VISA ALLA
@@ -149,7 +178,8 @@ Future<void> showHero() async {
   for (var h in heroes) {
     final strength = h.powerstats?.strength ?? 'Okänd';
     final power = h.powerstats?.power ?? 'Okänd';
-    print("• ${h.name} | Styrka: $strength | Kraft: $power");
+    final alignment = h.biography?.alignment ?? 'Okänd';
+    print("• ${h.name} | Styrka: $strength | Kraft: $power | ${alignment.toUpperCase()}");
   }
 }
 
@@ -169,7 +199,10 @@ Future<void> searchLocalHero() async {
   } else {
     print("\nLokala träffar:");
     for (var h in results) {
-      print("• ${h.name} | Styrka: ${h.powerstats?.strength} | Kraft: ${h.powerstats?.power}");
+      final strength = h.powerstats?.strength ?? 'Okänd';
+      final power = h.powerstats?.power ?? 'Okänd';
+      final alignment = h.biography?.alignment ?? 'Okänd';
+      print("• ${h.name} | Styrka: $strength | Kraft: $power | ${alignment.toUpperCase()}");
     }
   }
 }
@@ -223,4 +256,61 @@ Future<void> deleteHero() async {
   await manager.init(); // Laddar om från fil
 
   print("\nHJÄLTE RADERAD: ${heroToDelete.name}");
+}
+
+// 7. VISA HJÄLTAR EFTER ALIGNMENT
+Future<void> showHeroesByAlignment() async {
+  final heroes = await manager.getHeroList();
+  if (heroes.isEmpty) {
+    print("\nInga hjältar att visa.");
+    return;
+  }
+
+  print("\n" + "=" * 50);
+  print("   VISA HJÄLTAR EFTER TILLHÖRIGHET");
+  print("=" * 50);
+  print("1. Goda (good)");
+  print("2. Onda (bad)");
+  print("3. Neutrala (neutral)");
+  print("4. Alla hjältar");
+  stdout.write("\nDitt val: ");
+  final choice = stdin.readLineSync()?.trim();
+
+  List<HeroModel> filtered = [];
+  String title = "";
+
+  switch (choice) {
+  case "1":
+      filtered = heroes.where((h) => ((h.biography?.alignment ?? 'neutral').toLowerCase()) == 'good').toList();
+      title = "GODA HJÄLTAR";
+      break;
+    case "2":
+      filtered = heroes.where((h) => ((h.biography?.alignment ?? 'neutral').toLowerCase()) == 'bad').toList();
+      title = "ONDA HJÄLTAR";
+      break;
+    case "3":
+      filtered = heroes.where((h) => ((h.biography?.alignment ?? 'neutral').toLowerCase()) == 'neutral').toList();
+      title = "NEUTRALA HJÄLTAR";
+      break;
+    case "4":
+      filtered = heroes;
+      title = "ALLA HJÄLTAR";
+    break;
+    default:
+      print("Ogiltigt val!");
+      return;
+  }
+
+  if (filtered.isEmpty) {
+    print("\nInga $title att visa.");
+    return;
+  }
+
+  print("\n$title (${filtered.length} st):");
+  for (var h in filtered) {
+    final strength = h.powerstats?.strength ?? 'Okänd';
+    final power = h.powerstats?.power ?? 'Okänd';
+    final align = (h.biography?.alignment ?? 'neutral').toUpperCase();
+    print("• ${h.name} | Styrka: $strength | Kraft: $power | $align");
+  }
 }

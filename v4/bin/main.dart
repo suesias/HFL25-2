@@ -15,8 +15,9 @@ Future<void> main() async {
     print("2. Lägg till egen hjälte (manuellt)");
     print("3. Visa mina hjältar");
     print("4. Sök i mina hjältar");
-    print("5. Radera hjälte");  // NYTT!
-    print("6. Avsluta");
+    print("5. Radera hjälte");
+    print("6. Visa efter tillhörighet");
+    print("7. Avsluta");
     stdout.write("\nDitt val: ");
     final input = stdin.readLineSync();
 
@@ -37,7 +38,10 @@ Future<void> main() async {
         await deleteHero();
         break;
       case "6":
-        print("Hej då! Dina ändringar är sparade.");
+        await showHeroesByAlignment();
+        break;
+      case "7":
+        print("Hej då! Dina hjältar sparas i 'heroes.json'.");
         runProgram = false;
         break;
       default:
