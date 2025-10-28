@@ -9,6 +9,10 @@ environment:
 # Add regular dependencies here.
 dependencies:
   path: ^1.9.0
+  http: ^1.2.2
+  dotenv: ^4.2.0
+# När du lagt till ny dependency, kör 'dart pub get' för att installera den.
+
 
 dev_dependencies:
   lints: ^6.0.0
