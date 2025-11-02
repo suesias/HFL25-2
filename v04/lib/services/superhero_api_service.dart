@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:dotenv/dotenv.dart';
-import 'package:v4/models/hero_model.dart';
+import 'package:v04/models/hero_model.dart';
 
 class SuperheroApiService {
   final String _baseUrl = 'https://superheroapi.com/api';

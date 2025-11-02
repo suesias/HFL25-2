@@ -1,5 +1,5 @@
-import 'package:v4/logic.dart';
-import 'package:v4/managers/hero_data_manager.dart';
+import 'package:v04/logic.dart';
+import 'package:v04/managers/hero_data_manager.dart';
 import 'dart:io';
 
 Future<void> main() async {

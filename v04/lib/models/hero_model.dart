@@ -217,11 +217,10 @@ class HeroImage { // Kallar den HeroImage för att undvika konflikt med 'image'
 /* HERO MODEL */
 /* HERO MODEL */
 
-// lib/models/hero_model.dart (endast HeroModel-delen)
 class HeroModel {
   String? response;
-  String id; // Obligatorisk
-  String name; // Obligatorisk
+  String? id;
+  String? name;
   Powerstats? powerstats;
   Biography? biography;
   Appearance? appearance;
@@ -231,8 +230,8 @@ class HeroModel {
 
   HeroModel({
     this.response,
-    required this.id,
-    required this.name,
+    this.id,
+    this.name,
     this.powerstats,
     this.biography,
     this.appearance,
@@ -241,17 +240,20 @@ class HeroModel {
     this.image,
   });
 
-  HeroModel.fromJson(Map<String, dynamic> json)
-      : response = json['response'],
-        id = json['id'] ?? '',
-        name = json['name'] ?? '',
-        powerstats = json['powerstats'] != null ? Powerstats.fromJson(json['powerstats']) : null,
-        biography = json['biography'] != null ? Biography.fromJson(json['biography']) : null,
-        appearance = json['appearance'] != null ? Appearance.fromJson(json['appearance']) : null,
-        work = json['work'] != null ? Work.fromJson(json['work']) : null,
-        connections = json['connections'] != null ? Connections.fromJson(json['connections']) : null,
-        image = json['image'] != null ? HeroImage.fromJson(json['image']) : null;
+  // Från JSON
+  HeroModel.fromJson(Map<String, dynamic> json) {
+    response = json['response'];
+    id = json['id'];
+    name = json['name'];
+    powerstats = json['powerstats'] != null ? Powerstats.fromJson(json['powerstats']) : null;
+    biography = json['biography'] != null ? Biography.fromJson(json['biography']) : null;
+    appearance = json['appearance'] != null ? Appearance.fromJson(json['appearance']) : null;
+    work = json['work'] != null ? Work.fromJson(json['work']) : null;
+    connections = json['connections'] != null ? Connections.fromJson(json['connections']) : null;
+    image = json['image'] != null ? HeroImage.fromJson(json['image']) : null;
+  }
 
+  // Till JSON
   Map<String, dynamic> toJson() {
     return {
       'response': response,
